@@ -1,0 +1,16 @@
+boto3==1.26.135
+sagemaker==2.151.0
+flask==2.3.2
+pillow==9.5.0
+numpy==1.24.3
+scikit-learn==1.2.2
+matplotlib==3.7.1
+torch==2.0.1
+torchvision==0.15.2
+transformers==4.29.2
+gradio==3.33.1
+opencv-python==4.7.0.72
+anthropic==0.5.0
+aws-cdk-lib==2.99.1
+requests==2.31.0
+python-dotenv==1.0.0 
