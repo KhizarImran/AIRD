@@ -7,7 +7,7 @@ Uses Claude 3 Sonnet multimodal AI for corrosion detection via AWS Bedrock.
 import os
 import sys
 import uuid
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from typing import Dict, Any, List
 
@@ -116,6 +116,12 @@ def api_detect():
             return jsonify({'error': str(e)}), 500
     
     return jsonify({'error': 'File type not allowed'}), 400
+
+# Add this route to your Flask app
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    """Serve files from the uploads folder (including subfolders)"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080) 

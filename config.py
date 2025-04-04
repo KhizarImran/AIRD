@@ -16,7 +16,7 @@ AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 # Model Configuration
-MODEL_NAME = os.getenv("MODEL_NAME", "anthropic.claude-3-sonnet-20240229")
+MODEL_NAME = os.getenv("MODEL_NAME", "anthropic.claude-3-sonnet-20240229-v1:0")
 CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.7"))  # Threshold for positive corrosion detection
 
 # Application Configuration

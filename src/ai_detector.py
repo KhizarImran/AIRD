@@ -11,7 +11,6 @@ from typing import Dict, Any, Union, Tuple
 from io import BytesIO
 from PIL import Image
 import boto3
-import anthropic
 from dotenv import load_dotenv
 import config
 
@@ -245,10 +244,9 @@ def visualize_detection_result(image_path: str, detection_result: Dict[str, Any]
         detection_result: Dictionary with detection results
         
     Returns:
-        Path to the output visualization image
+        Web-accessible path to the output visualization image
     """
-    # This function can reuse the existing visualization code with minimal changes
-    # Open the image
+    # Your existing image processing code...
     image = Image.open(image_path).convert('RGB')
     draw = Image.new('RGBA', image.size, (0, 0, 0, 0))
     
@@ -286,7 +284,7 @@ def visualize_detection_result(image_path: str, detection_result: Dict[str, Any]
     except IOError:
         font = ImageFont.load_default()
     
-    # Calculate text position (this approach is safer than the existing code)
+    # Calculate text position
     text_x = 20
     text_y = 20
     
@@ -325,4 +323,9 @@ def visualize_detection_result(image_path: str, detection_result: Dict[str, Any]
     output_path = os.path.join(output_dir, output_filename)
     
     image.save(output_path)
-    return output_path 
+    
+    # Instead of returning the full file path, return a web URL path
+    # This is the key change: construct a URL path that will work with your Flask routes
+    web_path = f"uploads/results/{output_filename}"
+    
+    return web_path
