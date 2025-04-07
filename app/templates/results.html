@@ -85,6 +85,30 @@
             height: 100%;
             background: linear-gradient(90deg, #FF0090 0%, #FF9900 100%);
         }
+        .corrosion-regions-list {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .region-item {
+            background-color: rgba(255, 0, 0, 0.1);
+            border-left: 3px solid #FF0090;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+        .region-number {
+            font-weight: bold;
+            color: #FF0090;
+        }
+        .region-severity {
+            margin-left: 8px;
+            color: #666;
+        }
+        .region-description {
+            margin-top: 5px;
+            margin-bottom: 0;
+            font-size: 0.9em;
+        }
         .footer {
             text-align: center;
             margin-top: 2rem;
@@ -140,7 +164,7 @@
     <div class="header">
         <div class="container header-content">
             <div class="d-flex align-items-center mb-3">
-                <img src="./8080/static/mgroup_primarylogo_gradient_bluetext_rgb.png" alt="Mgroup Logo" class="logo">
+                <img src="./static/mgroup_primarylogo_gradient_bluetext_rgb.png" alt="Mgroup Logo" class="logo">
                 <div>
                     <h1 class="mb-0">Corrosion Detection Results</h1>
                 </div>
@@ -189,10 +213,23 @@
                                         
                                         <div class="mt-4">
                                             <p>
-                                                {% if result.has_corrosion %}
-                                                <span class="text-danger">⚠️ This image contains signs of corrosion that may require attention.</span>
-                                                {% else %}
-                                                <span class="text-success">✓ No significant signs of corrosion detected in this image.</span>
+                                                {% if result.has_corrosion and result.corrosion_regions %}
+                                                <div class="mt-3">
+                                                    <p><strong>Detected corrosion regions:</strong></p>
+                                                    <div class="corrosion-regions-list">
+                                                        {% for region in result.corrosion_regions %}
+                                                        <div class="region-item">
+                                                            <span class="region-number">Region #{{ loop.index }}</span>
+                                                            {% if region.severity %}
+                                                            <span class="region-severity">(Severity: {{ "%.2f"|format(region.severity) }})</span>
+                                                            {% endif %}
+                                                            {% if region.description %}
+                                                            <p class="region-description">{{ region.description }}</p>
+                                                            {% endif %}
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
                                                 {% endif %}
                                             </p>
                                             

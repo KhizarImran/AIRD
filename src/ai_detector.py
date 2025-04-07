@@ -20,23 +20,32 @@ load_dotenv()
 # Constants and configuration
 CONFIDENCE_THRESHOLD = config.CONFIDENCE_THRESHOLD
 CLAUDE_PROMPT_TEMPLATE = """
-Analyze this image for signs of corrosion on industrial pipes.
-Provide a detailed assessment of whether corrosion is present.
-Also rate the confidence of your assessment on a scale of 0.0 to 1.0, where 1.0 is complete certainty.
-Focus specifically on identifying:
-- Rust patches or discoloration
-- Pitting or surface degradation
-- Flaking or scaling of material
-- Any visible structural damage 
-- Cracking or fractures that may indicate corrosion damage
+Analyze this image for signs of corrosion on industrial structures or telecommunications towers.
 
-Format your response as a JSON object with the following structure:
+IMPORTANT: Be extremely precise about the exact location of visible corrosion. Focus only on areas showing:
+- Rust patches with orange/brown discoloration
+- Pitting, flaking, or scaling of metal surfaces
+- Areas where paint has deteriorated exposing corroded metal
+- Structural components with visible degradation
+
+For each corrosion area, provide:
+1. Precise bounding box coordinates [x1, y1, x2, y2] as fractions of image dimensions (values between 0.0-1.0)
+2. Severity score (0.1-1.0) based on the apparent corrosion extent
+3. Brief description of the specific corrosion type observed
+
+Only identify regions where corrosion is clearly visible - do not mark areas that are merely aged or discolored but not corroded.
+
+Format your response as a JSON object:
 {
   "has_corrosion": boolean,
   "confidence": float,
-  "detailed_analysis": string
+  "corrosion_regions": [
+    {"coordinates": [x1, y1, x2, y2], "severity": float, "description": "specific description of this corrosion area"}
+  ],
+  "detailed_analysis": "overall assessment of the structure's corrosion status"
 }
-Include only this JSON object in your response, with no additional explanatory text.
+
+Response should contain ONLY this JSON object, no additional text.
 """
 
 def get_api_key() -> str:
@@ -237,7 +246,7 @@ def detect_corrosion(image_path: str, use_aws_bedrock: bool = None) -> Dict[str,
 
 def visualize_detection_result(image_path: str, detection_result: Dict[str, Any]) -> str:
     """
-    Create a visualization of the corrosion detection results.
+    Create a visualization of the corrosion detection results with bounding boxes.
     
     Args:
         image_path: Path to the original image
@@ -246,23 +255,19 @@ def visualize_detection_result(image_path: str, detection_result: Dict[str, Any]
     Returns:
         Web-accessible path to the output visualization image
     """
-    # Your existing image processing code...
+    # Import needed modules at the top of your file, not here
+    from PIL import Image, ImageDraw, ImageFont
+    
+    # Open the original image
     image = Image.open(image_path).convert('RGB')
-    draw = Image.new('RGBA', image.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
     
     # Get detection results
     has_corrosion = detection_result['has_corrosion']
     confidence = detection_result['confidence']
     
     # Create a border color based on detection
-    color = (255, 0, 0, 180) if has_corrosion else (0, 255, 0, 180)
-    
-    # Create a new image for visualization
-    from PIL import ImageDraw, ImageFont
-    
-    # Open the original image
-    image = Image.open(image_path).convert('RGB')
-    draw = ImageDraw.Draw(image)
+    border_color = (255, 0, 0, 180) if has_corrosion else (0, 255, 0, 180)
     
     # Draw border
     width, height = image.size
@@ -270,8 +275,47 @@ def visualize_detection_result(image_path: str, detection_result: Dict[str, Any]
     for i in range(border_width):
         draw.rectangle(
             [(i, i), (width - i - 1, height - i - 1)],
-            outline=color[:3]  # Remove alpha for PIL
+            outline=border_color[:3]  # Remove alpha for PIL
         )
+    
+    # Draw corrosion regions if they exist
+    if has_corrosion and 'corrosion_regions' in detection_result:
+        for i, region in enumerate(detection_result['corrosion_regions']):
+            if 'coordinates' in region:
+                # Get coordinates and convert from relative (0-1) to absolute pixels
+                x1, y1, x2, y2 = region['coordinates']
+                x1, y1 = int(x1 * width), int(y1 * height)
+                x2, y2 = int(x2 * width), int(y2 * height)
+                
+                # Draw rectangle around the corrosion area
+                box_color = (255, 0, 0)  # Red for corrosion
+                box_thickness = 3
+                for j in range(box_thickness):
+                    draw.rectangle([(x1+j, y1+j), (x2-j, y2-j)], outline=box_color)
+                
+                # Add region number and severity if available
+                label = f"#{i+1}"
+                if 'severity' in region:
+                    label += f" ({region['severity']:.2f})"
+                    
+                # Draw label background
+                font_size = 16
+                try:
+                    font = ImageFont.truetype("arial.ttf", font_size)
+                except IOError:
+                    font = ImageFont.load_default()
+                    
+                text_bbox = draw.textbbox((x1, y1-20), label, font=font)
+                draw.rectangle(
+                    [
+                        (text_bbox[0] - 5, text_bbox[1] - 5),
+                        (text_bbox[2] + 5, text_bbox[3] + 5)
+                    ],
+                    fill=(0, 0, 0, 180)
+                )
+                
+                # Draw label text
+                draw.text((x1, y1-20), label, fill=(255, 255, 255), font=font)
     
     # Add text with results
     status_text = "CORROSION DETECTED" if has_corrosion else "NO CORROSION"
@@ -300,7 +344,7 @@ def visualize_detection_result(image_path: str, detection_result: Dict[str, Any]
     )
     
     # Draw text
-    draw.text((text_x, text_y), status_text, fill=color[:3], font=font)
+    draw.text((text_x, text_y), status_text, fill=border_color[:3], font=font)
     
     # Add confidence text
     conf_text_y = text_bbox[3] + 10
