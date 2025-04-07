@@ -123,5 +123,12 @@ def uploaded_file(filename):
     """Serve files from the uploads folder (including subfolders)"""
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.context_processor
+def inject_xsrf_token():
+    """Make XSRF token available to templates"""
+    if '_xsrf' in request.cookies:
+        return dict(xsrf_token=request.cookies.get('_xsrf'))
+    return dict(xsrf_token='')
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080) 

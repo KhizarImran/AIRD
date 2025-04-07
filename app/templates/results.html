@@ -3,32 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rust Detection Results</title>
+    <title>Mgroup Corrosion Detection Results</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #F9F7F3;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .header {
-            background-color: #0d6efd;
+            background: linear-gradient(135deg, #FF0090 0%, #FF9900 100%);
             color: white;
             padding: 2rem 0;
             margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-content {
+            position: relative;
+            z-index: 1;
         }
         .results-container {
             background-color: white;
             display: flex;
             flex-direction: column;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             padding: 2rem;
             margin-bottom: 2rem;
         }
         .result-item {
             margin-bottom: 2.5rem;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid #eeeeee;
             padding-bottom: 2rem;
         }
         .result-item:last-child {
@@ -38,11 +45,11 @@
         .result-img {
             width: 100%;
             height: auto;
-            max-height: 400px; /* Limit maximum height */
-            object-fit: contain; /* Keep aspect ratio and fit within bounds */
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-top: 10px; /* Add space above image */
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
         }
         .result-info {
             padding: 1rem;
@@ -50,7 +57,7 @@
         .result-heading {
             display: flex;
             align-items: center;
-            flex-wrap:wrap;
+            flex-wrap: wrap;
             margin-bottom: 1rem;
         }
         .result-status {
@@ -60,11 +67,11 @@
             font-weight: 600;
         }
         .status-positive {
-            background-color: #dc3545;
+            background-color: #FF0090;
             color: white;
         }
         .status-negative {
-            background-color: #198754;
+            background: linear-gradient(135deg, #FF9900 0%, #FFC107 100%);
             color: white;
         }
         .confidence-bar {
@@ -76,39 +83,69 @@
         }
         .confidence-level {
             height: 100%;
-            background-color: #0d6efd;
+            background: linear-gradient(90deg, #FF0090 0%, #FF9900 100%);
         }
         .footer {
             text-align: center;
             margin-top: 2rem;
             padding: 1rem 0;
-            color: #6c757d;
+            color: #002A5B;
         }
         .summary-card {
-            background-color: #f8f9fa;
-            border-radius: 10px;
+            background-color: white;
+            border-radius: 20px;
             padding: 1.5rem;
             margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
         .detailed-analysis {
             background-color: #f8f9fa;
-            border-radius: 5px;
+            border-radius: 15px;
             padding: 1rem;
             margin-top: 1rem;
             white-space: pre-line;
+            border-left: 4px solid #FF0090;
         }
         .analysis-toggle {
             cursor: pointer;
-            color: #0d6efd;
+            color: #FF0090;
             text-decoration: underline;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #002A5B;
+        }
+        .btn-primary {
+            background-color: #FF0090;
+            border-color: #FF0090;
+        }
+        .btn-primary:hover {
+            background-color: #E0007C;
+            border-color: #E0007C;
+        }
+        .btn-secondary {
+            background-color: #002A5B;
+            border-color: #002A5B;
+        }
+        .btn-secondary:hover {
+            background-color: #001F43;
+            border-color: #001F43;
+        }
+        .logo {
+            height: 50px;
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="container">
-            <h1>Rust Detection Results</h1>
-            <p class="lead">Analysis results from Rust Detection AI for uploaded pipe images</p>
+        <div class="container header-content">
+            <div class="d-flex align-items-center mb-3">
+                <img src="./8080/static/mgroup_primarylogo_gradient_bluetext_rgb.png" alt="Mgroup Logo" class="logo">
+                <div>
+                    <h1 class="mb-0">Corrosion Detection Results</h1>
+                </div>
+            </div>
+            <p class="lead">Analysis results from Corrosion Detection AI for uploaded pipe images</p>
         </div>
     </div>
 
@@ -189,7 +226,7 @@
 
     <div class="footer">
         <div class="container">
-            <p>Callisto &copy; 2025</p>
+            <p>Mgroup &copy; 2025</p>
         </div>
     </div>
 
@@ -211,4 +248,4 @@
         }
     </script>
 </body>
-</html> 
+</html>

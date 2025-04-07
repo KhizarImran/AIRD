@@ -3,40 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rust Detection System</title>
+    <title>Mgroup Corrosion Detection</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #F9F7F3;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .header {
-            background-color: #0d6efd;
+            background: linear-gradient(135deg, #FF0090 0%, #FF9900 100%);
             color: white;
             padding: 2rem 0;
             margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header-content {
+            position: relative;
+            z-index: 1;
         }
         .upload-container {
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             padding: 2rem;
             margin-bottom: 2rem;
         }
         .drop-zone {
-            border: 2px dashed #0d6efd;
-            border-radius: 5px;
+            border: 2px dashed #FF0090;
+            border-radius: 15px;
             padding: 3rem;
             text-align: center;
             cursor: pointer;
             transition: background-color 0.3s;
         }
         .drop-zone:hover {
-            background-color: #f1f8ff;
+            background-color: #FFF5FA;
         }
         .drop-zone.active {
-            background-color: #e8f4ff;
-            border-color: #0d6efd;
+            background-color: #FFF0F7;
+            border-color: #FF0090;
         }
         .preview-container {
             display: flex;
@@ -48,7 +55,7 @@
             position: relative;
             width: 150px;
             height: 150px;
-            border-radius: 5px;
+            border-radius: 15px;
             overflow: hidden;
         }
         .preview-item img {
@@ -73,15 +80,47 @@
             text-align: center;
             margin-top: 2rem;
             padding: 1rem 0;
-            color: #6c757d;
+            color: #002A5B;
+        }
+        .btn-primary {
+            background-color: #FF0090;
+            border-color: #FF0090;
+        }
+        .btn-primary:hover {
+            background-color: #E0007C;
+            border-color: #E0007C;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #FF0090 0%, #FF9900 100%);
+            border: none;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #002A5B;
+        }
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, rgba(255, 0, 144, 0.1) 0%, rgba(255, 153, 0, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 0, 144, 0.2);
+        }
+        .logo {
+            height: 50px;
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="container">
-            <h1>Rust Detection System</h1>
-            <p class="lead">Upload pipe images to detect potential rust</p>
+        <div class="container header-content">
+            <div class="d-flex align-items-center mb-3">
+                <img src="./static/mgroup_primarylogo_gradient_bluetext_rgb.png" alt="Mgroup Logo" class="logo">
+                <div>
+                    <h1 class="mb-0">Corrosion Detection System</h1>
+                </div>
+            </div>
+            <p class="lead">Upload pipe images to detect potential corrosion</p>
         </div>
     </div>
 
@@ -100,11 +139,11 @@
             <div class="col-lg-8 mx-auto">
                 <div class="upload-container">
                     <h2 class="mb-4">Upload Images</h2>
-                    <form action="./upload" method="post" enctype="multipart/form-data" id="upload-form">
+                    <form action="./8080/upload" method="post" enctype="multipart/form-data" id="upload-form">
                         <input type="hidden" name="_xsrf" value="{{ xsrf_token }}">
                         <div class="drop-zone" id="drop-zone">
                             <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#0d6efd" class="bi bi-cloud-arrow-up mb-3" viewBox="0 0 16 16">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#FF0090" class="bi bi-cloud-arrow-up mb-3" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
                                     <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
                                 </svg>
@@ -143,7 +182,7 @@
 
     <div class="footer">
         <div class="container">
-            <p>Callisto &copy; 2025</p>
+            <p>Mgroup &copy; 2025</p>
         </div>
     </div>
 
@@ -225,4 +264,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
