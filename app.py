@@ -54,6 +54,8 @@ def process_image(file) -> Dict[str, Any]:
     
     # Create visualization
     result_image_path = visualize_detection_result(filepath, detection_result)
+
+    print(f"Detected hazards: {detection_result.get('detected_hazards', [])}")
     
     # Prepare result information
     return {
@@ -72,24 +74,38 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    """Handle image upload and corrosion detection"""
+    """Handle image upload and hazard detection"""
+    print("Upload endpoint called")  # Debug
+    
     if 'files[]' not in request.files:
+        print("No files[] in request.files")  # Debug
         flash('No file part')
         return redirect(request.url)
     
     files = request.files.getlist('files[]')
+    print(f"Number of files received: {len(files)}")  # Debug
+    
     if not files or files[0].filename == '':
+        print("No files selected")  # Debug
         flash('No selected file')
         return redirect(request.url)
     
     results = []
     for file in files:
+        print(f"Processing file: {file.filename}")  # Debug
         if file and allowed_file(file.filename):
             try:
+                print(f"File allowed: {file.filename}")  # Debug
                 result = process_image(file)
                 results.append(result)
             except Exception as e:
+                print(f"Error processing {file.filename}: {str(e)}")  # Debug
                 flash(f"Error processing {file.filename}: {str(e)}")
+        else:
+            print(f"File not allowed: {file.filename}")  # Debug
+            flash(f"File {file.filename} not allowed")
+    
+    print(f"Total results: {len(results)}")  # Debug
     
     return render_template('results.html', results=results)
 
