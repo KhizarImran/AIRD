@@ -57,15 +57,21 @@ def process_image(file) -> Dict[str, Any]:
 
     print(f"Detected hazards: {detection_result.get('detected_hazards', [])}")
     
-    # Prepare result information
-    return {
+    # Prepare result information - Include ALL fields from detection_result
+    result = {
         'filename': file.filename,
         'has_corrosion': detection_result['has_corrosion'],
+        'has_hazards': detection_result.get('has_hazards', False),  # Add this
+        'detected_hazards': detection_result.get('detected_hazards', []),  # Add this
         'confidence': detection_result['confidence'],
         'detailed_analysis': detection_result.get('detailed_analysis', ''),
         'original_image': filepath,
         'result_image': result_image_path
     }
+    
+    print(f"Result for {file.filename}: has_hazards={result['has_hazards']}, detected_hazards={len(result['detected_hazards'])}")
+    
+    return result
 
 @app.route('/')
 def index():

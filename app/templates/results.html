@@ -285,65 +285,6 @@
                     <h3>Analysis Summary</h3>
                     <p>Total images analyzed: <strong>{{ results|length }}</strong></p>
                     
-                    {% set images_with_hazards = 0 %}
-                    {% set total_hazards = 0 %}
-                    {% set category_counts = {
-                        "CORROSION": 0,
-                        "LOOSE_COMPONENTS": 0,
-                        "STRUCTURAL_INTEGRITY": 0,
-                        "ELECTRICAL_HAZARDS": 0,
-                        "ENVIRONMENTAL_THREATS": 0,
-                        "SAFETY_EQUIPMENT_ISSUES": 0
-                    } %}
-                    
-                    {% for result in results %}
-                        {% if result.has_hazards or result.has_corrosion %}
-                            {% set images_with_hazards = images_with_hazards + 1 %}
-                        {% endif %}
-                        
-                        {% if result.detected_hazards %}
-                            {% set total_hazards = total_hazards + result.detected_hazards|length %}
-                            
-                            {% for hazard in result.detected_hazards %}
-                                {% if hazard.category|upper in category_counts %}
-                                    {% set _ = category_counts.update({hazard.category|upper: category_counts[hazard.category|upper] + 1}) %}
-                                {% endif %}
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
-                    
-                    <p>Images with hazards detected: <strong>{{ images_with_hazards }}</strong></p>
-                    <p>Total hazards identified: <strong>{{ total_hazards }}</strong></p>
-                    
-                    {% if total_hazards > 0 %}
-                    <div class="hazard-summary mt-3">
-                        <h5>Hazards by Category:</h5>
-                        <div class="row">
-                            {% set category_colors = {
-                                "CORROSION": "#ff0000",
-                                "LOOSE_COMPONENTS": "#ffa500",
-                                "STRUCTURAL_INTEGRITY": "#0000ff",
-                                "ELECTRICAL_HAZARDS": "#ffff00", 
-                                "ENVIRONMENTAL_THREATS": "#008000",
-                                "SAFETY_EQUIPMENT_ISSUES": "#800080"
-                            } %}
-                            
-                            {% for category, count in category_counts.items() %}
-                                {% if count > 0 %}
-                                <div class="col-md-6 mb-2">
-                                    <div class="hazard-chip" style="background-color: {{ category_colors[category] }}20; border-left: 4px solid {{ category_colors[category] }};">
-                                        <span class="hazard-category-label" style="background-color: {{ category_colors[category] }}">
-                                            {{ category|replace("_", " ") }}
-                                        </span>
-                                        <span class="hazard-count">{{ count }}</span>
-                                    </div>
-                                </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    
                     <div class="mt-3">
                         <a href="./" class="btn btn-primary">Analyze More Images</a>
                         <button class="btn btn-secondary ms-2" onclick="window.print()">Print Results</button>
@@ -357,10 +298,11 @@
                     </div>
                     <div class="filter-buttons">
                         <button class="btn filter-btn active" data-category="all">All Hazards</button>
-                        {% for category in category_counts.keys() %}
-                            {% if category_counts[category] > 0 %}
+                        <!-- Static list of hazard categories -->
+                        {% set hazard_categories = ["CORROSION", "STRUCTURAL_INTEGRITY", "ENVIRONMENTAL_THREATS", "ELECTRICAL_HAZARDS", "LOOSE_COMPONENTS", "SAFETY_EQUIPMENT_ISSUES"] %}
+                        
+                        {% for category in hazard_categories %}
                             <button class="btn filter-btn" data-category="{{ category|lower }}">{{ category|replace("_", " ") }}</button>
-                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
@@ -573,3 +515,4 @@
     </script>
 </body>
 </html>
+                                                    
