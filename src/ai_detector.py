@@ -20,10 +20,10 @@ load_dotenv()
 # Constants and configuration
 CONFIDENCE_THRESHOLD = config.CONFIDENCE_THRESHOLD
 CLAUDE_PROMPT_TEMPLATE = """
-Analyze this image for signs of corrosion and other infrastructure hazards. Focus specifically on identifying:
+Analyze this image for signs of infrastructure hazards. Focus specifically on identifying:
 
 1. CORROSION: Rust patches, discoloration, pitting, flaking on metal surfaces
-2. LOOSE_COMPONENTS: Unsecured fasteners, hanging/detached parts, misalignments
+2. LOOSE_COMPONENTS: missing junction box covers, Unsecured fasteners, hanging/detached parts, misalignments
 3. STRUCTURAL_INTEGRITY: Bent components, cracks, deformations, compromised elements
 4. ELECTRICAL_HAZARDS: Exposed wiring, improper connections, damaged electrical components
 5. ENVIRONMENTAL_THREATS: Debris accumulation, vegetation interference, water damage
@@ -53,10 +53,10 @@ Format your response as a JSON object:
 Response should contain ONLY this JSON object, no additional text.
 """
 MULTI_HAZARD_PROMPT_TEMPLATE = """
-Analyze this image for infrastructure hazards. Focus specifically on identifying:
+Analyze this image for signs of infrastructure hazards. Focus specifically on identifying:
 
 1. CORROSION: Rust patches, discoloration, pitting, flaking on metal surfaces
-2. LOOSE_COMPONENTS: Unsecured fasteners, hanging/detached parts, misalignments
+2. LOOSE_COMPONENTS: missing junction box covers, Unsecured fasteners, hanging/detached parts, misalignments
 3. STRUCTURAL_INTEGRITY: Bent components, cracks, deformations, compromised elements
 4. ELECTRICAL_HAZARDS: Exposed wiring, improper connections, damaged electrical components
 5. ENVIRONMENTAL_THREATS: Debris accumulation, vegetation interference, water damage
@@ -70,8 +70,9 @@ For EACH detected hazard, provide:
 
 Format your response as a JSON object:
 {
-  "has_hazards": boolean,
+  "has_corrosion": boolean,
   "confidence": float,
+  "detailed_analysis": string,
   "detected_hazards": [
     {
       "category": string,
